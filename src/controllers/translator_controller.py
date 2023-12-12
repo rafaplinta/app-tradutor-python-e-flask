@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request
 from models.language_model import LanguageModel
+from models.history_model import HistoryModel
 from deep_translator import GoogleTranslator
 
 translator_controller = Blueprint("translator_controller", __name__)
@@ -35,6 +36,15 @@ def translate_text():
     text_to_translate = request.form.get("text-to-translate")
     translate_from = request.form.get("translate-from")
     translate_to = request.form.get("translate-to")
+
+    # instancia a history para salvar as traduções no histórico
+    HistoryModel(
+        {
+            "text_to_translate": text_to_translate,
+            "translate_from": translate_from,
+            "translate_to": translate_to
+        }
+    ).save()
 
     # a biblioteca GoogleTranslator traduz o texto usando os idiomas de origem
     # e destino
